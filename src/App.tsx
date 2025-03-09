@@ -14,11 +14,27 @@ import {
     DataGrid,
     GridColDef,
     GridRenderCellParams,
+    GridFilterModel,
+    GridSortModel
 } from '@mui/x-data-grid';
 import Brightness4Icon from '@mui/icons-material/Brightness4';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
+import MovieModal from './components/MovieModal';
 import { Movie } from './types/movie';
 import { fetchMovies } from './services/movieService';
+
+const loadGridState = (): {
+    filterModel: GridFilterModel | undefined,
+    sortModel: GridSortModel | undefined
+} => {
+    try {
+        const savedState = localStorage.getItem('movieGridState');
+        return savedState ? JSON.parse(savedState) : { filterModel: undefined, sortModel: undefined };
+    } catch (error) {
+        console.error('Error loading grid state from localStorage', error);
+        return { filterModel: undefined, sortModel: undefined };
+    }
+};
 
 const App: React.FC = () => {
     const [movies, setMovies] = useState<Movie[]>([]);
@@ -28,10 +44,16 @@ const App: React.FC = () => {
         return savedMode ? JSON.parse(savedMode) : false;
     });
     const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
-    // const [openModal, setOpenModal] = useState<boolean>(false);
+    const [openModal, setOpenModal] = useState<boolean>(false);
     const [openImageModal, setOpenImageModal] = useState<boolean>(false);
     const [selectedImage, setSelectedImage] = useState<string>('');
 
+    const [filterModel, setFilterModel] = useState<GridFilterModel | undefined>(
+        loadGridState().filterModel
+    );
+    const [sortModel, setSortModel] = useState<GridSortModel | undefined>(
+        loadGridState().sortModel
+    );
 
     const theme = useMemo(() => createTheme({
         palette: {
@@ -58,6 +80,15 @@ const App: React.FC = () => {
         localStorage.setItem('darkMode', JSON.stringify(darkMode));
     }, [darkMode]);
 
+    useEffect(() => {
+        if (filterModel || sortModel) {
+            localStorage.setItem('movieGridState', JSON.stringify({
+                filterModel,
+                sortModel
+            }));
+        }
+    }, [filterModel, sortModel]);
+
     const toggleDarkMode = useCallback(() => {
         setDarkMode(prevMode => !prevMode);
     }, []);
@@ -66,6 +97,11 @@ const App: React.FC = () => {
         event.stopPropagation();
         setSelectedImage(imageUrl);
         setOpenImageModal(true);
+    }, []);
+
+    const handleRowClick = useCallback((movie: Movie) => {
+        setSelectedMovie(movie);
+        setOpenModal(true);
     }, []);
 
     const getRatingColor = useCallback((rating: number): string => {
@@ -187,6 +223,9 @@ const App: React.FC = () => {
         setOpenImageModal(false);
     }, []);
 
+    const handleCloseMovieModal = useCallback(() => {
+        setOpenModal(false);
+    }, []);
 
     return (
         <ThemeProvider theme={theme}>
@@ -214,7 +253,17 @@ const App: React.FC = () => {
                             pagination: {
                                 paginationModel: { page: 0, pageSize: 10 },
                             },
+                            sorting: {
+                                sortModel: sortModel || [],
+                            },
+                            filter: {
+                                filterModel: filterModel || {
+                                    items: [],
+                                },
+                            },
                         }}
+                        onFilterModelChange={setFilterModel}
+                        onSortModelChange={setSortModel}
                         sx={{
                             '& .MuiDataGrid-cell': {
                                 py: 2,
@@ -229,8 +278,15 @@ const App: React.FC = () => {
                                 cursor: 'pointer',
                             },
                         }}
+                        onRowClick={(params) => handleRowClick(params.row as Movie)}
                     />
                 </Paper>
+
+                <MovieModal
+                    open={openModal}
+                    onClose={handleCloseMovieModal}
+                    movie={selectedMovie}
+                />
 
                 <Modal
                     open={openImageModal}
