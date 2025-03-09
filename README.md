@@ -1,54 +1,74 @@
-# React + TypeScript + Vite
+# MUI DataGrid Table Example
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Пример реализации интерактивной таблицы с использованием React, TypeScript и Material-UI DataGrid.
 
-Currently, two official plugins are available:
+## Демонстрация
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Живой пример доступен по ссылке: [Демо приложения](https://ecommerce-empire-test.netlify.app//) (замените на вашу ссылку после деплоя)
 
-## Expanding the ESLint configuration
+## Функциональность
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- Отображение таблицы фильмов с использованием MUI DataGrid
+- Сортировка и фильтрация данных в таблице
+- Адаптивная высота строк (от 100px до 300px)
+- Модальное окно с детальной информацией при клике на строку
+- Модальное окно с увеличенным изображением при клике на постер
+- Переключение между светлой и темной темой
+- Сохранение состояния таблицы (сортировка, фильтрация) при перезагрузке страницы
+- Получение данных из открытого API (The Movie Database API)
+- Различные стили для текстовых колонок
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+## Технологии
+
+- React
+- TypeScript
+- Material UI (MUI) + DataGrid
+- Локальное хранилище для сохранения состояния
+- Fetching данных из внешнего API
+
+## Запуск проекта
+
+1. Клонировать репозиторий:
+```bash
+git clone https://github.com/dyalkapow/material-table-react.git
+cd material-table-react
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
+2. Установить зависимости:
+```bash
+yarn install
 ```
+
+3. Запустить проект в режиме разработки:
+```bash
+vite dev
+```
+
+Приложение будет доступно по адресу [http://localhost:3000](http://localhost:3000)
+
+## Сборка для продакшена
+
+```bash
+npm run build
+```
+
+## Дополнительная информация
+
+### API
+Проект использует открытый API The Movie Database (TMDB) для получения информации о фильмах. В случае недоступности API используются мок-данные.
+
+### Особенности реализации
+
+1. **Адаптивная высота строк**:
+    - Минимальная высота: 100px
+    - Максимальная высота: 300px (автоматически регулируется в зависимости от содержимого)
+
+2. **Стилизация колонок**:
+    - Названия фильмов: полужирный шрифт, цвет из основной палитры
+    - Описания: курсив, вторичный цвет текста, ограничение по высоте с многоточием
+    - Даты: моноширинный шрифт, цвет из вторичной палитры
+    - Рейтинг: цветной фон в зависимости от значения
+
+3. **Сохранение состояния**:
+    - Состояние фильтров и сортировки сохраняется в localStorage
+    - Выбор темы также сохраняется между сессиями
