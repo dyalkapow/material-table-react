@@ -3,7 +3,9 @@ import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.tsx'
 
-createRoot(document.getElementById('root')!).render(
+const root = document.getElementById('root');
+root.style.cssText = "width: 100%";
+createRoot(root!).render(
   <StrictMode>
     <App />
   </StrictMode>,
